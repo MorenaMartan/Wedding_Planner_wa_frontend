@@ -9,12 +9,12 @@
         <router-link to="/edit" class="wedding-info-link text-decoration-none">
           <div class="wedding-info">
             <h3 class="mb-0 fancy-name">Ivan &amp; Ivana</h3>
-            <small>15.11.2026.</small>
+            <small>{{ weddingDateDisplay }}</small>
           </div>
         </router-link>
       </div>
 
-      <div class="remaining-pill">15 days left</div>
+      <div class="remaining-pill">{{ daysLeftMessage }}</div>
     </header>
 
     <div class="container-fluid flex-grow-1">
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { ref, computed } from "vue";
 import LeftMenu from "@/components/LeftMenu.vue";
 import SubMenu from "@/components/SubMenu.vue";
 import ContentPanel from "@/components/ContentPanel.vue";
@@ -50,15 +51,38 @@ import ContentPanel from "@/components/ContentPanel.vue";
 export default {
   name: "WelcomeView",
   components: { LeftMenu, SubMenu, ContentPanel },
-  data() {
-    return {
-      currentCategory: "bride",
-      currentSub: "Wedding dress",
-    };
-  },
-  methods: {
-    onSelectCategory(cat) {
-      this.currentCategory = cat;
+  setup() {
+    const weddingDate = ref(new Date("2026-11-15"));
+
+    const currentCategory = ref("bride");
+    const currentSub = ref("Wedding dress");
+
+    const weddingDateDisplay = computed(() =>
+      weddingDate.value.toLocaleDateString("hr-HR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    );
+
+    const daysLeft = computed(() => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const target = new Date(weddingDate.value);
+      target.setHours(0, 0, 0, 0);
+      const diffMs = target - today;
+      return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    });
+
+    const daysLeftMessage = computed(() => {
+      if (daysLeft.value > 1) return `${daysLeft.value} days left`;
+      if (daysLeft.value === 1) return "1 day left 💍";
+      if (daysLeft.value === 0) return "Today is the big day! 💒";
+      return "Wedding day has passed 💐";
+    });
+
+    const onSelectCategory = (cat) => {
+      currentCategory.value = cat;
       const defaults = {
         bride: "Wedding dress",
         groom: "Suit",
@@ -66,8 +90,17 @@ export default {
         church: "Ceremony",
         hall: "Venues",
       };
-      this.currentSub = defaults[cat] || null;
-    },
+      currentSub.value = defaults[cat] || null;
+    };
+
+    return {
+      weddingDate,
+      weddingDateDisplay,
+      daysLeftMessage,
+      currentCategory,
+      currentSub,
+      onSelectCategory,
+    };
   },
 };
 </script>

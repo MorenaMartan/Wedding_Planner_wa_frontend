@@ -8,7 +8,7 @@
       <router-link to="/welcome" class="wedding-info-link text-decoration-none">
         <div class="wedding-info text-start">
           <h3 class="mb-0 fancy-name">Ivan &amp; Ivana</h3>
-          <small>15.11.2026.</small>
+          <small class="date-text fancy-name">15.11.2026.</small>
         </div>
       </router-link>
     </div>
@@ -51,8 +51,9 @@ export default {
 <style scoped>
 .edit-shell {
   min-height: 100vh;
-  background: #08182e;
-  color: #fff;
+  background: #d4af37 url("@/assets/background.png") no-repeat center center;
+  background-size: cover;
+  color: #08182e;
   padding: 2rem;
   text-align: center;
 }
@@ -70,7 +71,7 @@ export default {
 }
 
 .wedding-info-link:hover {
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(8, 24, 46, 0.15);
   transform: translateY(-2px);
   cursor: pointer;
 }
@@ -79,16 +80,20 @@ export default {
   font-family: "Italianno", cursive;
   font-size: 3rem;
   line-height: 1;
-  color: #d4af37;
+  color: #08182e;
 }
 
 .edit-form {
   width: 100%;
   max-width: 400px;
+  backdrop-filter: blur(6px);
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  padding: 2rem;
 }
 
 .label-gold {
-  color: #d4af37;
+  color: #08182e;
   font-weight: 600;
   letter-spacing: 0.05rem;
 }
@@ -97,19 +102,19 @@ export default {
   width: 100%;
   padding: 0.6rem 1rem;
   border-radius: 30px;
-  border: 1px solid #d4af37;
+  border: 1px solid #08182e;
   background: transparent;
-  color: #fff;
+  color: #08182e;
 }
 
 .form-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(8, 24, 46, 0.7);
 }
 
 .btn-gold {
-  background: #d4af37;
+  background: #08182e;
   border: none;
-  color: #08182e;
+  color: #d4af37;
   font-weight: 600;
   padding: 0.6rem 1.6rem;
   border-radius: 999px;
@@ -117,7 +122,10 @@ export default {
 }
 
 .btn-gold:hover {
-  background: #e5c45e;
-  color: #08182e;
+  background: #0c274f;
+  color: #d4af37;
+}
+.date-text {
+  font-size: 30px;
 }
 </style>
