@@ -1,28 +1,20 @@
 <template>
-  <div class="car-flowers-card mb-3 rounded-4 overflow-hidden">
-    <div class="row g-0">
+  <div class="car-flowers-card mb-3 rounded-4 overflow-hidden" @click="$emit('read-more', car)">
+    <div class="row g-0 h-100">
       <div class="col-12 col-md-4">
         <img :src="car.gallery && car.gallery.length ? car.gallery[0] : 'https://via.placeholder.com/420x200'" class="w-100 h-100 car-img" alt="car flower shop" />
       </div>
       <div class="col-12 col-md-8">
-        <div class="p-3 h-100 d-flex flex-column justify-content-between">
-          <div>
+        <div class="p-3 h-100 d-flex flex-column">
+          <div class="flex-grow-1 overflow-hidden" style="min-height:0">
             <h5 class="shop-title">{{ car.name }}</h5>
             <div class="mb-1">
               <span class="text-warning">★ ★ ★ ★ ★</span>
               <small class="text-muted ms-2">{{ car.rating }}</small>
             </div>
-            <p class="mb-1">📍 {{ car.address }}</p>
-            <p class="mb-1">📞 {{ car.phone }}</p>
-            <p class="mb-2">📧 {{ car.email }}</p>
-          </div>
-          <div>
-            <button
-              class="btn btn-dark rounded-pill px-4 py-1"
-              @click="$emit('read-more', car)"
-            >
-              View car flowers
-            </button>
+            <p class="mb-0 small">📍 {{ car.address }}</p>
+            <p class="mb-0 small">📞 {{ car.phone }}</p>
+            <p class="mb-1 small">📧 {{ car.email }}</p>
           </div>
         </div>
       </div>
@@ -43,11 +35,14 @@ export default {
 <style scoped>
 .car-flowers-card {
   background: #fff;
+  cursor: pointer;
+  transition: transform 0.15s;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  height: 230px;
 }
 .car-img {
   object-fit: cover;
-  min-height: 150px;
+  height: 230px;
 }
 .shop-title {
   font-family: Georgia, serif;

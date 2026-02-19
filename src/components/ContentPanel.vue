@@ -848,51 +848,38 @@ export default {
       guestFilterSide: "all",
 
       budgetItems: [
-        { label: "Wedding dress", icon: bride, planned: 1200, spent: 800 },
-        { label: "Rings", icon: ring, planned: 800, spent: 500 },
-        { label: "Shoes (bride)", icon: heels, planned: 150, spent: 0 },
-        {
-          label: "Hairdresser (bride)",
-          icon: hairdresser,
-          planned: 90,
-          spent: 0,
-        },
-        { label: "Nails", icon: nails, planned: 50, spent: 0 },
-        { label: "Maid of Honor", icon: maid, planned: 120, spent: 0 },
-
-        { label: "Tie", icon: tai, planned: 40, spent: 0 },
-        { label: "Shoes (groom)", icon: shoes, planned: 120, spent: 0 },
-        { label: "Shirt", icon: shirt, planned: 60, spent: 0 },
-        { label: "Suit", icon: suit, planned: 350, spent: 0 },
-        {
-          label: "Hairdresser (groom)",
-          icon: hairdresser,
-          planned: 25,
-          spent: 0,
-        },
-        { label: "Barber", icon: barber, planned: 25, spent: 0 },
-        { label: "Best Man", icon: groom, planned: 80, spent: 0 },
-
-        { label: "Bouquet", icon: bouquet, planned: 90, spent: 0 },
-        { label: "Lapel", icon: lapel, planned: 25, spent: 0 },
-        { label: "Car flowers", icon: car, planned: 70, spent: 0 },
-        { label: "Hall flowers", icon: flowers, planned: 180, spent: 0 },
-        { label: "Church flowers", icon: church, planned: 120, spent: 0 },
-
+        { label: "Wedding dress", icon: bride, planned: 0, spent: 0 },
+        { label: "Rings", icon: ring, planned: 0, spent: 0 },
+        { label: "Shoes (bride)", icon: heels, planned: 0, spent: 0 },
+        { label: "Hairdresser (bride)", icon: hairdresser, planned: 0, spent: 0 },
+        { label: "Nails", icon: nails, planned: 0, spent: 0 },
+        { label: "Maid of Honor", icon: maid, planned: 0, spent: 0 },
+        { label: "Tie", icon: tai, planned: 0, spent: 0 },
+        { label: "Shoes (groom)", icon: shoes, planned: 0, spent: 0 },
+        { label: "Shirt", icon: shirt, planned: 0, spent: 0 },
+        { label: "Suit", icon: suit, planned: 0, spent: 0 },
+        { label: "Hairdresser (groom)", icon: hairdresser, planned: 0, spent: 0 },
+        { label: "Barber", icon: barber, planned: 0, spent: 0 },
+        { label: "Best Man", icon: groom, planned: 0, spent: 0 },
+        { label: "Bouquet", icon: bouquet, planned: 0, spent: 0 },
+        { label: "Lapel", icon: lapel, planned: 0, spent: 0 },
+        { label: "Car flowers", icon: car, planned: 0, spent: 0 },
+        { label: "Hall flowers", icon: flowers, planned: 0, spent: 0 },
+        { label: "Church flowers", icon: church, planned: 0, spent: 0 },
         { label: "Date & Time", icon: time, planned: 0, spent: 0 },
-        { label: "Engagement course", icon: engagement, planned: 50, spent: 0 },
-        { label: "Music", icon: music, planned: 120, spent: 0 },
-        { label: "A Priest", icon: priest, planned: 50, spent: 0 },
+        { label: "Engagement course", icon: engagement, planned: 0, spent: 0 },
+        { label: "Music", icon: music, planned: 0, spent: 0 },
+        { label: "A Priest", icon: priest, planned: 0, spent: 0 },
         { label: "Readers", icon: readers, planned: 0, spent: 0 },
-        { label: "Documents", icon: note, planned: 30, spent: 0 },
-        { label: "Confetti", icon: confetti, planned: 40, spent: 0 },
-
-        { label: "Hall", icon: halla, planned: 1500, spent: 0 },
-        { label: "Menu", icon: menu, planned: 900, spent: 0 },
-        { label: "Cake", icon: cake, planned: 300, spent: 0 },
-        { label: "Band", icon: band, planned: 700, spent: 0 },
-        { label: "First dance", icon: dance, planned: 100, spent: 0 },
+        { label: "Documents", icon: note, planned: 0, spent: 0 },
+        { label: "Confetti", icon: confetti, planned: 0, spent: 0 },
+        { label: "Hall", icon: halla, planned: 0, spent: 0 },
+        { label: "Menu", icon: menu, planned: 0, spent: 0 },
+        { label: "Cake", icon: cake, planned: 0, spent: 0 },
+        { label: "Band", icon: band, planned: 0, spent: 0 },
+        { label: "First dance", icon: dance, planned: 0, spent: 0 },
       ],
+      budgetSaveTimeout: null,
 
       salons: [],
       stores: [],
@@ -1328,10 +1315,31 @@ export default {
       const all = res.data.map((v) => ({ ...v, id: v._id }));
 
       for (const [cat, prop] of Object.entries(categoryMap)) {
-        this[prop] = all.filter((v) => v.category === cat);
+        this[prop] = all.filter((v) =>
+          Array.isArray(v.category)
+            ? v.category.includes(cat)
+            : v.category === cat,
+        );
       }
     } catch (err) {
       console.error("Failed to load vendors:", err);
+    }
+
+    try {
+      const budgetRes = await api.get("/budget");
+      const saved = budgetRes.data;
+      if (saved.length) {
+        for (const item of this.budgetItems) {
+          const match = saved.find((s) => s.label === item.label);
+          if (match) {
+            item.planned = match.planned || 0;
+            item.spent = match.spent || 0;
+          }
+        }
+      }
+      this.emitBudgetTotals();
+    } catch (err) {
+      console.error("Failed to load budget:", err);
     }
   },
   watch: {
@@ -1340,6 +1348,14 @@ export default {
     },
     sub() {
       this.selectedItem = null;
+    },
+    budgetItems: {
+      deep: true,
+      handler() {
+        this.emitBudgetTotals();
+        clearTimeout(this.budgetSaveTimeout);
+        this.budgetSaveTimeout = setTimeout(() => this.saveBudget(), 800);
+      },
     },
     currentChat: {
       immediate: true,
@@ -1351,6 +1367,23 @@ export default {
     },
   },
   methods: {
+    emitBudgetTotals() {
+      const planned = this.budgetItems.reduce((s, i) => s + (i.planned || 0), 0);
+      const spent = this.budgetItems.reduce((s, i) => s + (i.spent || 0), 0);
+      this.$emit("budget-updated", { planned, spent });
+    },
+    async saveBudget() {
+      try {
+        const items = this.budgetItems.map((i) => ({
+          label: i.label,
+          planned: i.planned || 0,
+          spent: i.spent || 0,
+        }));
+        await api.put("/budget", { items });
+      } catch (err) {
+        console.error("Failed to save budget:", err);
+      }
+    },
     sortList(list) {
       if (this.sortBy === "name") {
         return [...list].sort((a, b) => a.name.localeCompare(b.name));

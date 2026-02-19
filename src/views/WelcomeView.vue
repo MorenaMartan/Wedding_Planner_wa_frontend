@@ -45,6 +45,8 @@
             :category="currentCategory"
             :active-sub="currentSub"
             :chats="chats"
+            :budget-planned="budgetPlanned"
+            :budget-spent="budgetSpent"
             @select-sub="currentSub = $event"
             @delete-chat="handleDeleteChat"
           />
@@ -56,6 +58,7 @@
             :sub="currentSub"
             :chats="chats"
             @open-chat="handleOpenChat"
+            @budget-updated="onBudgetUpdated"
           />
         </div>
       </div>
@@ -186,6 +189,14 @@ export default {
       window.location.href = "/";
     };
 
+    const budgetPlanned = ref(0);
+    const budgetSpent = ref(0);
+
+    const onBudgetUpdated = ({ planned, spent }) => {
+      budgetPlanned.value = planned;
+      budgetSpent.value = spent;
+    };
+
     return {
       weddingDate,
       weddingDateDisplay,
@@ -200,6 +211,9 @@ export default {
       handleOpenChat,
       handleDeleteChat,
       logOut,
+      budgetPlanned,
+      budgetSpent,
+      onBudgetUpdated,
     };
   },
 };

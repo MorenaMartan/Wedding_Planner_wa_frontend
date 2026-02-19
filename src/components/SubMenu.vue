@@ -157,10 +157,10 @@
       </div>
       <div class="mt-2 small text-muted">
         <div>
-          Planned: <strong>{{ planned }} €</strong>
+          Planned: <strong>{{ budgetPlanned }} €</strong>
         </div>
         <div>
-          Spent: <strong>{{ spent }} €</strong>
+          Spent: <strong>{{ budgetSpent }} €</strong>
         </div>
         <div>
           Remaining: <strong>{{ remaining }} €</strong>
@@ -220,11 +220,17 @@ export default {
       type: Array,
       default: () => [],
     },
+    budgetPlanned: {
+      type: Number,
+      default: 0,
+    },
+    budgetSpent: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
-      planned: 5000,
-      spent: 3200,
       notes: [
         {
           id: 1,
@@ -305,10 +311,11 @@ export default {
       return map[this.category] || [];
     },
     remaining() {
-      return this.planned - this.spent;
+      return this.budgetPlanned - this.budgetSpent;
     },
     progress() {
-      return Math.min((this.spent / this.planned) * 100, 100).toFixed(0);
+      if (!this.budgetPlanned) return 0;
+      return Math.min((this.budgetSpent / this.budgetPlanned) * 100, 100).toFixed(0);
     },
     guestStats() {
       const totalInvited = this.guests.length;
