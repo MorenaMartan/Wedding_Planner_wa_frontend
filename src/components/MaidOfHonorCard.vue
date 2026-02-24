@@ -83,22 +83,11 @@ export default {
 
     async saveData() {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("No token found, please login.");
-
-        const response = await axios.post(
-          "http://localhost:5000/maidofhonor",
-          {
+        await api.post("/maidofhonor", {
             name: this.name,
             accepted: this.accepted,
-            tasks: this.tasks,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+            tasks: this.tasks, 
+        });
 
         alert("Saved successfully!");
         this.fetchMaids();
@@ -113,11 +102,7 @@ export default {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await axios.get("http://localhost:5000/maidofhonor", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get("/maidofhonor");
 
         this.allMaids = response.data;
 
@@ -208,4 +193,5 @@ export default {
   accent-color: #d4af37;
 }
 </style>
+
 
