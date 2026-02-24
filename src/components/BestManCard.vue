@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from "../api.js";
 
 export default {
   name: "BestManCard",
@@ -207,3 +207,4 @@ export default {
   accent-color: #d4af37;
 }
 </style>
+
