@@ -83,23 +83,11 @@ export default {
 
     async saveData() {
       try {
-        const token = localStorage.getItem("token");
-
-        console.log("FRONTEND TOKEN:", token);
-
-        await axios.post(
-          "http://localhost:5000/bestman",
-          {
+        await api.post("/bestman",{
             name: this.name,
             accepted: this.accepted,
             tasks: this.tasks,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+         });
 
         alert("Saved successfully!");
       } catch (error) {
@@ -113,11 +101,7 @@ export default {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await axios.get("http://localhost:5000/bestman", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get("/bestman");
 
         this.allBestMen = response.data;
 
@@ -207,4 +191,5 @@ export default {
   accent-color: #d4af37;
 }
 </style>
+
 
