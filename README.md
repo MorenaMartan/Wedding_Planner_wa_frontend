@@ -1,3 +1,7 @@
+## 🎥 Demo
+
+[![Wedding Planner Demo](https://img.youtube.com/vi/8C1I0bJ4XsU/0.jpg)](https://www.youtube.com/watch?v=8C1I0bJ4XsU)
+
 # Wedding Planner Frontend
 
 Frontend for a wedding planning platform designed to centralize guest management, budgeting, timelines, and vendor coordination.
